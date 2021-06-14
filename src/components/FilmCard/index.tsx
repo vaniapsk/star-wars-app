@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, TextContent } from './styles';
 
-interface IMovieCardProps{
+interface IFilmCardProps{
   film: IFilm;
 }
 
@@ -25,7 +25,7 @@ interface IFilm {
 
 }
 
-const MovieCard: React.FC<IMovieCardProps> = ({
+const FilmCard: React.FC<IFilmCardProps> = ({
   film,
 }) => (
   <Container>
@@ -38,4 +38,4 @@ const MovieCard: React.FC<IMovieCardProps> = ({
 
 );
 
-export default MovieCard;
+export default FilmCard;

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import MovieCard from '../../components/MovieCard';
+import FilmCard from '../../components/FilmCard';
 import api from '../../services/api';
 import { Container, SearchHeader } from './styles';
 
@@ -22,34 +22,35 @@ interface IFilm {
 }
 
 const FilmsListDashboard: React.FC = () => {
-  const [movieList, setMovieList] = useState<IFilm[]>([]);
+  const [filmList, setFilmList] = useState<IFilm[]>([]);
   const [searchWord, setSearchWord] = useState('');
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
+      // could also have done api.get(`./films/?search?${searchWord}`)
       api.get('./films')
         .then((response) => {
-          const allMovies :IFilm[] = response.data.results;
+          const allFIlms :IFilm[] = response.data.results;
 
           if (searchWord === '') {
-            setMovieList(allMovies);
+            setFilmList(allFIlms);
           } else {
-            const moviesByDescription = allMovies
-              .filter((movie) => movie.opening_crawl.toLocaleLowerCase()
+            const filmsByDescription = allFIlms
+              .filter((film) => film.opening_crawl.toLocaleLowerCase()
                 .includes(searchWord.toLocaleLowerCase()));
 
-            const moviesByTitle = allMovies
-              .filter((movie) => movie.title.toLocaleLowerCase()
+            const filmsByTitle = allFIlms
+              .filter((film) => film.title.toLocaleLowerCase()
                 .includes(searchWord.toLocaleLowerCase()));
 
-            const existingMoviesUrls = moviesByTitle.map((movie) => movie.url);
+            const existingFilmsUrls = filmsByTitle.map((film) => film.url);
 
-            const moviesCombined = [
-              ...moviesByTitle,
-              ...moviesByDescription.filter(({ url }) => !existingMoviesUrls.includes(url)),
+            const combinedFilms = [
+              ...filmsByTitle,
+              ...filmsByDescription.filter(({ url }) => !existingFilmsUrls.includes(url)),
             ];
 
-            setMovieList(moviesCombined);
+            setFilmList(combinedFilms);
           }
         });
     }, 400);
@@ -57,22 +58,21 @@ const FilmsListDashboard: React.FC = () => {
   }, [searchWord]);
 
   return (
-    <>
 
-      <Container>
-        <SearchHeader>
-          <input onChange={(e) => setSearchWord(e.target.value)} type="text" name="search-box" placeholder="Search by title or description..." />
-        </SearchHeader>
+    <Container>
+      <SearchHeader>
+        <input onChange={(e) => setSearchWord(e.target.value)} type="text" name="search-box" placeholder="Search by title or description..." />
+      </SearchHeader>
 
-        {movieList.map((movie) => (
-          <MovieCard
-            key={movie.episode_id}
-            film={movie}
-          />
-        ))}
+      {filmList.map((film) => (
+        <FilmCard
+          key={film.episode_id}
+          film={film}
+        />
+      ))}
 
-      </Container>
-    </>
+    </Container>
+
   );
 };
 
