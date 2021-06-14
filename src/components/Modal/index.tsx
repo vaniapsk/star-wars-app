@@ -22,6 +22,7 @@ const customStyles = {
     width: '736px',
     height: '700px',
     border: 'none',
+
   },
 };
 

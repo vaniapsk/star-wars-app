@@ -26,30 +26,42 @@ const FilmsListDashboard: React.FC = () => {
   const [searchWord, setSearchWord] = useState('');
 
   useEffect(() => {
-    api.get('./films')
-      .then((response) => {
-        setMovieList(response.data.results);
-        // console.log(response.data.results);
-      });
-  }, []);
+    const timeOutId = setTimeout(() => {
+      api.get('./films')
+        .then((response) => {
+          const allMovies :IFilm[] = response.data.results;
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setSearchWord(e.target.value);
-  };
+          if (searchWord === '') {
+            setMovieList(allMovies);
+          } else {
+            const moviesByDescription = allMovies
+              .filter((movie) => movie.opening_crawl.toLocaleLowerCase()
+                .includes(searchWord.toLocaleLowerCase()));
 
-  useEffect(() => {
-    api.get(`./films/?search=${searchWord}`)
-      .then((response) => {
-        setMovieList(response.data.results);
-      });
+            const moviesByTitle = allMovies
+              .filter((movie) => movie.title.toLocaleLowerCase()
+                .includes(searchWord.toLocaleLowerCase()));
+
+            const existingMoviesUrls = moviesByTitle.map((movie) => movie.url);
+
+            const moviesCombined = [
+              ...moviesByTitle,
+              ...moviesByDescription.filter(({ url }) => !existingMoviesUrls.includes(url)),
+            ];
+
+            setMovieList(moviesCombined);
+          }
+        });
+    }, 400);
+    return () => clearTimeout(timeOutId);
   }, [searchWord]);
+
   return (
     <>
 
       <Container>
         <SearchHeader>
-          <input onChange={handleChange} type="text" name="search-box" placeholder="Search by title..." />
+          <input onChange={(e) => setSearchWord(e.target.value)} type="text" name="search-box" placeholder="Search by title or description..." />
         </SearchHeader>
 
         {movieList.map((movie) => (
