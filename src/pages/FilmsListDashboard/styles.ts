@@ -8,3 +8,17 @@ export const Container = styled.div`
 
   align-items: center;
 `;
+
+export const SearchHeader = styled.div`
+display: flex;
+input{
+  width: 350px;
+  height: 30px;
+  margin: 10px;;
+  font-size: large;
+}
+Button{
+  height: 30px;
+  margin: auto;
+}
+`;

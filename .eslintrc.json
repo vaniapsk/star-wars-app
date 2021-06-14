@@ -22,7 +22,7 @@
         "react-hooks"
     ],
     "rules": {
-      // "camelcase": "warn",
+       "camelcase": "off",
       // "@typescript-eslint/camelcase": ["off"],
       "import/prefer-default-export": "off",
       "react-hooks/rules-of-hooks": "error",

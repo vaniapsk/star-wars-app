@@ -1,8 +1,12 @@
 import React from 'react';
-import FilmsListDashboard from './pages/FilmsListDashboard';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Routes from './routes';
 
 const App: React.FC = () => (
-  <FilmsListDashboard />
+  <Router>
+    <Routes />
+  </Router>
+
 );
 
 export default App;
