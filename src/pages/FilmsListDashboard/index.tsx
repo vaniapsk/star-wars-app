@@ -49,7 +49,7 @@ const FilmsListDashboard: React.FC = () => {
 
       <Container>
         <SearchHeader>
-          <input onChange={handleChange} type="text" name="search-box" placeholder="Search by title or description..." />
+          <input onChange={handleChange} type="text" name="search-box" placeholder="Search by title..." />
         </SearchHeader>
 
         {movieList.map((movie) => (
