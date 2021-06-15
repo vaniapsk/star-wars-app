@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import FilmCard from '../../components/FilmCard';
 import api from '../../services/api';
@@ -21,9 +22,16 @@ interface IFilm {
 
 }
 
+interface IError{
+  ErrorTitle: string;
+  ErrorCodeStatus: number;
+  ErrorMessage: string;
+}
+
 const FilmsListDashboard: React.FC = () => {
   const [filmList, setFilmList] = useState<IFilm[]>([]);
   const [searchWord, setSearchWord] = useState('');
+  const [appError, setAppError] = useState<IError>();
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -52,6 +60,30 @@ const FilmsListDashboard: React.FC = () => {
 
             setFilmList(combinedFilms);
           }
+        })
+        .catch((err: AxiosError) => {
+          if (err.response) {
+            // client received an error response (5xx, 4xx)
+            setAppError({
+              ErrorTitle: err.message,
+              ErrorCodeStatus: err.response.status,
+              ErrorMessage: err.message,
+            });
+          } else if (err.request) {
+            // client never received a response, or request never left
+            setAppError({
+              ErrorTitle: err.message,
+              ErrorCodeStatus: err.request.status,
+              ErrorMessage: 'This site can not be reached. Try checking the connection',
+            });
+          } else {
+            // anything else
+            setAppError({
+              ErrorTitle: err.name,
+              ErrorCodeStatus: 0,
+              ErrorMessage: err.message,
+            });
+          }
         });
     }, 400);
     return () => clearTimeout(timeOutId);
@@ -64,12 +96,23 @@ const FilmsListDashboard: React.FC = () => {
         <input onChange={(e) => setSearchWord(e.target.value)} type="text" name="search-box" placeholder="Search by title or description..." />
       </SearchHeader>
 
-      {filmList.map((film) => (
-        <FilmCard
-          key={film.episode_id}
-          film={film}
-        />
-      ))}
+      {!appError && (
+        filmList.map((film) => (
+          <FilmCard
+            key={film.episode_id}
+            film={film}
+          />
+        ))
+      )}
+
+      { appError && (
+        <div>
+          <h2>{appError.ErrorTitle}</h2>
+          <p>Error code: {appError.ErrorCodeStatus.toString()}</p>
+          <p>{appError.ErrorMessage}</p>
+        </div>
+
+      )}
 
     </Container>
 
